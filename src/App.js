@@ -122,9 +122,6 @@ function App() {
   return (
 
     <div className="App" style={{ maxWidth: '60vw', margin: '0 auto', marginBottom: 40 }}>
-    <div>
-      <Header/>
-    </div>
       <div style={{ position: 'absolute', top: 0, left: 0 }}>
         <Button size="small" variant="contained" onClick={async () => {
           try {
