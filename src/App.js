@@ -1,10 +1,10 @@
 import './App.css';
 import { useState, useEffect } from 'react'
 import Button from '@material-ui/core/Button';
-import ReceipesList from './components/ReceipesList';
+import TasksList from './components/TasksList';
 import Typography from '@material-ui/core/Typography';
-import ReceipeForm from './components/ReceipeForm';
-import ReceipeDetail from './components/ReceipeDetail';
+import TaskForm from './components/TaskForm';
+import TaskDetail from './components/TaskDetail';
 import Paper from '@material-ui/core/Paper';
 import Header from './components/Header'
 const axios = require('axios');
@@ -12,42 +12,42 @@ const axios = require('axios');
 function App() {
 
   const [showForm, setShowForm] = useState(false)
-  const [receipes, setReceipes] = useState([])
-  const [receipesLoading, setReceipesLoading] = useState(true)
+  const [tasks, setTasks] = useState([])
+  const [tasksLoading, setTasksLoading] = useState(true)
 
-  const [receipeDetail, setReceipeDetail] = useState({})
-  const [showReceipeDetail, setShowReceipeDetail] = useState(false)
+  const [taskDetail, setTaskDetail] = useState({})
+  const [showTaskDetail, setShowTaskDetail] = useState(false)
 
-  const [formReceipe, setFormReceipe] = useState(undefined)
+  const [formTask, setFormTask] = useState(undefined)
 
   useEffect(() => {
-    fetchReceipesBackend()
+    fetchTasksBackend()
   }, [])
 
   const showEditForm = (data) => {
-    setFormReceipe(data)
+    setFormTask(data)
     setShowForm(true)
   }
 
-  const fetchReceipesBackend = async () => {
+  const fetchTasksBackend = async () => {
     try {
-      const response = await axios.get('https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/receipes')
-      setReceipes(response.data)
-      setReceipesLoading(false)
+      const response = await axios.get('http://localhost:3000/api/tasks/')
+      setTasks(response.data)
+      setTasksLoading(false)
     } catch (err) {
       console.log(err)
     }
   }
 
-  const addReceipeBackend = async receipe => {
-    if (receipe.name) {
+  const addTaskBackend = async task => {
+    if (task.title) {
       try {
-        const response = await axios.post('https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/receipes', receipe, {
+        const response = await axios.post('http://localhost:3000/api/tasks/', task, {
           headers: {
             'Content-Type': 'application/json'
           }
         })
-        await fetchReceipesBackend()
+        await fetchTasksBackend()
         setShowForm(false)
       } catch (err) {
         console.log(err)
@@ -57,114 +57,94 @@ function App() {
     }
   }
 
-  const updateReceipeBackend = async receipe => {
-    if (receipe.name) {
-      if (receipe._id != null) {
+  const updateTaskBackend = async task => {
+    if (task.title) {
+      if (task._id != null) {
         try {
-          const response = await axios.put(`https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/receipes/${receipe._id}`, receipe, {
+          const response = await axios.put(`http://localhost:3000/api/tasks/${task._id}`, task, {
             headers: {
               'Content-Type': 'application/json'
             }
           })
-          await fetchReceipesBackend()
+          await fetchTasksBackend()
           setShowForm(false)
         } catch (err) {
           console.log(err)
         }
       } else {
-        alert("Impossible de modifier une recette sans id.")
+        alert("Impossible de modifier une tache sans id.")
       }
     } else {
-      alert("Veuillez donner un nom à la recette pour pouvoir l'ajouter.")
+      alert("Veuillez donner un nom à la tache pour pouvoir l'ajouter.")
     }
   }
 
-  const deleteReceipeBackend = async receipeId => {
-    if (receipeId != null) {
+  const deleteTaskBackend = async taskId => {
+    if (taskId != null) {
       try {
-        const response = await axios.delete(`https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/receipes/${receipeId}`)
-        await fetchReceipesBackend()
+        const response = await axios.delete(`http://localhost:3000/api/tasks/${taskId}`)
+        await fetchTasksBackend()
       } catch (err) {
         console.log(err)
       }
     } else {
-      alert("deleteReceipeBackend doit recevoir un id")
+      alert("deleteTaskBackend doit recevoir un id")
     }
   }
 
-  const fetchReceipeBackendAndEdit = async receipeId => {
-    if (receipeId != null) {
+  const fetchTaskBackendAndEdit = async taskId => {
+    if (taskId != null) {
       try {
-        const response = await axios.get(`https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/receipes/${receipeId}`)
+        const response = await axios.get(`http://localhost:3000/api/tasks/${taskId}`)
         showEditForm(response.data)
       } catch (err) {
         console.log(err)
       }
     } else {
-      alert("fetchReceipeBackendAndDisplay doit recevoir un id")
+      alert("fetchTaskBackendAndDisplay doit recevoir un id")
     }
   }
 
-  const fetchReceipeBackendAndDisplay = async receipeId => {
-    if (receipeId != null) {
+  const fetchTaskBackendAndDisplay = async taskId => {
+    if (taskId != null) {
       try {
-        const response = await axios.get(`https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/receipes/${receipeId}`)
-        setReceipeDetail(response.data)
-        setShowReceipeDetail(true)
+        const response = await axios.get(`http://localhost:3000/api/tasks/${taskId}`)
+        setTaskDetail(response.data)
+        setShowTaskDetail(true)
       } catch (err) {
         console.log(err)
       }
     } else {
-      alert("fetchReceipeBackendAndDisplay doit recevoir un id")
+      alert("fetchTaskBackendAndDisplay doit recevoir un id")
     }
   }
 
   return (
 
     <div className="App" style={{ maxWidth: '60vw', margin: '0 auto', marginBottom: 40 }}>
-      <div style={{ position: 'absolute', top: 0, left: 0 }}>
-        <Button size="small" variant="contained" onClick={async () => {
-          try {
-            const response = await axios.get('https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/status')
-            if (response.status == 200) {
-              if (response.data.success === true) {
-                alert("Succès : Connexion avec l'API OK.")
-              } else {
-                alert(`Échec : le endpoint /status devrait répondre {"success":true} mais a répondu ` + JSON.stringify(response.data))
-              }
-            } else {
-              alert("Échec : le endpoint /status a répondu avec un code retour " + response.status)
-            }
-          } catch (err) {
-            alert("Échec : la tentative de connexion au endpoint /status a généré l'erreur suivante :\n" + err)
-          }
-        }}>
-          Check API
-        </Button>
-      </div>
 
       <header style={{ margin: 30, textAlign: 'center' }}>
         <Typography variant="h1">
-          Cook App
+          Tasks App
         </Typography>
 
       </header>
 
       {
-        receipesLoading
+        tasksLoading
           ?
           <div align="center">
             <Typography variant="h5">
-              Chargement des recettes...
+              Chargement des taches...
             </Typography>
           </div>
           :
           (
-            showReceipeDetail ?
+            showTaskDetail ?
               <Paper elevation={3} style={{ padding: 30 }}>
-                <ReceipeDetail
-                  receipe={receipeDetail}
-                  cancelReceipe={() => setShowReceipeDetail(false)}
+                <TaskDetail
+                  task={taskDetail}
+                  cancelTask={() => setShowTaskDetail(false)}
                 />
               </Paper>
               :
@@ -172,35 +152,35 @@ function App() {
                 showForm
                   ?
                   <Paper elevation={3} style={{ padding: 30 }}>
-                    <ReceipeForm
-                      addReceipe={receipe => addReceipeBackend(receipe)}
-                      updateReceipe={receipe => updateReceipeBackend(receipe)}
-                      cancelReceipe={() => setShowForm(false)}
-                      formReceipe={formReceipe}
+                    <TaskForm
+                      addTask={task => addTaskBackend(task)}
+                      updateTask={task => updateTaskBackend(task)}
+                      cancelTask={() => setShowForm(false)}
+                      formTask={formTask}
                     />
                   </Paper>
                   :
                   <div align="center">
 
                     <Button variant="contained" color="primary" style={{ margin: 30 }} size="large" onClick={() => showEditForm()}>
-                      Ajouter une recette
+                      Ajouter une tâche
                     </Button>
 
 
-                    {receipes.length > 0
+                    {tasks.length > 0
                       ?
                       <Paper elevation={3}>
 
-                        <ReceipesList
-                          receipes={receipes}
-                          editReceipe={id => fetchReceipeBackendAndEdit(id)}
-                          displayReceipe={id => fetchReceipeBackendAndDisplay(id)}
-                          deleteReceipe={id => deleteReceipeBackend(id)}
+                        <TasksList
+                          tasks={tasks}
+                          editTask={id => fetchTaskBackendAndEdit(id)}
+                          displayTask={id => fetchTaskBackendAndDisplay(id)}
+                          deleteTask={id => deleteTaskBackend(id)}
                         />
                       </Paper>
                       :
                       <Typography variant="h5">
-                        Aucune recette enregistrée.
+                        Aucune tâche enregistrée.
                       </Typography>
                     }
 

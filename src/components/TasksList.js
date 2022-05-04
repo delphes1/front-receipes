@@ -17,35 +17,34 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function ReceipesList(props) {
+export default function TasksList(props) {
     const classes = useStyles();
 
     return (
         <List className={classes.root}>
-            {props.receipes.map((r, i) => (
+            {props.tasks.map((r, i) => (
                 <div key={r._id}>
                     {i != 0 && <Divider variant="middle" />}
                     <ListItem
                         alignItems="flex-start"
                         style={{ cursor: 'pointer' }}
-                        onClick={() => props.displayReceipe(r._id)}
+                        onClick={() => props.displayTask(r._id)}
                     >
                         <ListItemText
                             primary={
                                 <Typography variant="h4" gutterBottom>
-                                    {r.name}
+                                    {r.title}
                                 </Typography>
                             }
-                            secondary={r.ingredients.map(ing => ing.name).join(', ')}
                         />
                         <ListItemSecondaryAction>
-                            <IconButton style={{ marginLeft: 15 }} edge="end" onClick={() => props.displayReceipe(r._id)}>
+                            <IconButton style={{ marginLeft: 15 }} edge="end" onClick={() => props.displayTask(r._id)}>
                                 👁
                             </IconButton>
-                            <IconButton style={{ marginLeft: 15 }} edge="end" onClick={() => props.editReceipe(r._id)}>
+                            <IconButton style={{ marginLeft: 15 }} edge="end" onClick={() => props.editTask(r._id)}>
                                 ✍️
                             </IconButton>
-                            <IconButton style={{ marginLeft: 15 }} edge="end" onClick={() => props.deleteReceipe(r._id)}>
+                            <IconButton style={{ marginLeft: 15 }} edge="end" onClick={() => props.deleteTask(r._id)}>
                                 ❌
                             </IconButton>
                         </ListItemSecondaryAction>
