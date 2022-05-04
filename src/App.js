@@ -125,7 +125,7 @@ function App() {
       <div style={{ position: 'absolute', top: 0, left: 0 }}>
         <Button size="small" id="checkapi" variant="contained" onClick={async () => {
           try {
-            const response = await axios.get('https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/status')
+            const response = await axios.get('http://localhost:3000/api/status')
             if (response.status == 200) {
               if (response.data.success === true) {
                 alert("Succès : Connexion avec l'API OK.")
