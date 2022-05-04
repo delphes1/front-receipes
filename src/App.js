@@ -122,6 +122,26 @@ function App() {
   return (
 
     <div className="App" style={{ maxWidth: '60vw', margin: '0 auto', marginBottom: 40 }}>
+      <div style={{ position: 'absolute', top: 0, left: 0 }}>
+        <Button size="small" id="checkapi" variant="contained" onClick={async () => {
+          try {
+            const response = await axios.get('https://us-central1-nodeproject-16ae1.cloudfunctions.net/webApii/api/status')
+            if (response.status == 200) {
+              if (response.data.success === true) {
+                alert("Succès : Connexion avec l'API OK.")
+              } else {
+                alert(`Échec : le endpoint /status devrait répondre {"success":true} mais a répondu ` + JSON.stringify(response.data))
+              }
+            } else {
+              alert("Échec : le endpoint /status a répondu avec un code retour " + response.status)
+            }
+          } catch (err) {
+            alert("Échec : la tentative de connexion au endpoint /status a généré l'erreur suivante :\n" + err)
+          }
+        }}>
+          Check API
+        </Button>
+      </div>
 
       <header style={{ margin: 30, textAlign: 'center' }}>
         <Typography variant="h1">
